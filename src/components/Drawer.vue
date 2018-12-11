@@ -95,9 +95,13 @@
 
     $router
 
+    $routersInfo
+
     $progress
 
     $toast
+
+    @State('currentUserAccount') currentUserAccount
 
     @State('appStatus') appStatus
 
@@ -151,15 +155,24 @@
     }
 
     async onBaseRouteItemClick (clickedRouterValue: string) {
-      const targetPath = baseRouterInfoList.find(routerInfo => routerInfo.value === clickedRouterValue).to
+      if (clickedRouterValue === 'profile') {
+        this.$router.push({
+          name: this.$routersInfo.accounts.name,
+          params: {
+            accountId: this.currentUserAccount.id
+          }
+        })
+      } else {
+        const targetPath = baseRouterInfoList.find(routerInfo => routerInfo.value === clickedRouterValue).to
 
-      if (isBaseTimeLine(clickedRouterValue) && (targetPath === this.$route.path)) {
-        this.fetchTimeLineStatuses(clickedRouterValue)
+        if (isBaseTimeLine(clickedRouterValue) && (targetPath === this.$route.path)) {
+          this.fetchTimeLineStatuses(clickedRouterValue)
+        }
+
+        if (!this.shouldDrawerDocked) this.updateDrawerOpenStatus(false)
+
+        this.$router.push(targetPath)
       }
-
-      if (!this.shouldDrawerDocked) this.updateDrawerOpenStatus(false)
-
-      this.$router.push(targetPath)
 
       window.scrollTo(0, 0)
     }
